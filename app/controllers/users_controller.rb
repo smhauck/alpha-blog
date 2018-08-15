@@ -1,16 +1,30 @@
 class UsersController < ApplicationController
+  before_action :set_user, only: [:edit, :update, :show, :destroy]
 
   def create
     @user = User.new(user_params)
     if @user.save
-      flash[:success] = "Welcome to the Alpha Blog #{user.username}"
-      redirect_to_articles_path
+      flash[:success] = "Welcome to the Alpha Blog #{@user.username}"
+      redirect_to articles_path
     else
       render 'new'
     end
   end
 
+  def edit
+  end
+
+  def update
+    if @user.update(user_params)
+      flash[:success] = 'Your account was updated succesfully'
+      redirect_to articles_path
+    else
+      render :edit
+    end
+  end
+
   def index
+    @users = User.all
   end
 
   def new
@@ -20,12 +34,15 @@ class UsersController < ApplicationController
   def show
   end
 
+
   private
+
   def user_params
     params.require(:user).permit(:username, :email, :password)
   end
 
   def set_user
+    @user = User.find(params[:id])
   end
 
 end
